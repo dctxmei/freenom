@@ -166,7 +166,7 @@ class FreeNom
                         'form_params' => [
                             'token' => $token,
                             'renewalid' => $id,
-                            sprintf('renewalperiod[%s]', $id) => '12M', // 续期一年
+                            sprintf('renewalperiod[%s]', $id) => '1M', // 续期一月
                             'paymentmethod' => 'credit', // 支付方式：信用卡
                         ],
                         'cookies' => $this->jar
@@ -182,19 +182,19 @@ class FreeNom
                 if (stripos($body, 'Order Confirmation') === false) { // 续期失败
                     $result .= sprintf("%s续期失败\n", $domain);
                     $notRenewed .= sprintf('<a href="http://%s" rel="noopener" target="_blank">%s</a>', $domain, $domain);
-                    $notRenewedTG .= sprintf('[%s](http://%s)  ', $domain, $domain);
+                    $notRenewedTG .= sprintf("[%s](http://%s)\n", $domain, $domain);
                 } else {
                     $result .= sprintf("%s续期成功\n", $domain);
                     $renewed .= sprintf('<a href="http://%s" rel="noopener" target="_blank">%s</a>', $domain, $domain);
-                    $renewedTG .= sprintf('[%s](http://%s)  ', $domain, $domain);
+                    $renewedTG .= sprintf("[%s](http://%s)\n", $domain, $domain);
                     continue;
                 }
             }
 
             $domainInfo .= sprintf('<a href="http://%s" rel="noopener" target="_blank">%s</a>还有<span style="font-weight: bold; font-size: 16px;">%d</span>天到期，', $domain, $domain, $days);
-            $domainInfoTG .= sprintf('[%s](http://%s)还有*%d*天到期，', $domain, $domain, $days);
+            $domainInfoTG .= sprintf("[%s](http://%s) 还有 *%d* 天到期；", $domain, $domain, $days);
         }
-        $domainInfoTG .= "更多信息可以参考[Freenom官网](https://my.freenom.com/domains.php?a=renewals)哦~\n\n（如果你不想每次执行都收到推送，请将config.php中noticeFreq的值设为0，使程序只在有续期操作时才推送）";
+        $domainInfoTG .= "更多信息可以參考 [Freenom 官網](https://my.freenom.com/domains.php?a=renewals) 哦～\n\n（如果你不想每次執行都收到推送，請將 config.php 中 noticeFreq 的值設為 0，使程序只在有續期操作時才推送）";
 
         if ($notRenewed || $renewed) {
             Mail::send(
@@ -207,9 +207,9 @@ class FreeNom
                 ]
             );
             TelegramBot::send(sprintf(
-                "主人，我刚刚帮你续期域名啦~\n\n%s%s\n另外，%s",
-                $renewedTG ? sprintf("续期成功：%s\n", $renewedTG) : '',
-                $notRenewedTG ? sprintf("续期失败：%s\n", $notRenewedTG) : '',
+                "主人，撫子剛剛幫你續期域名啦～\n\n%s%s\n另外，%s",
+                $renewedTG ? sprintf("續期成功：%s\n", $renewedTG) : '',
+                $notRenewedTG ? sprintf("續期失敗：%s\n", $notRenewedTG) : '',
                 $domainInfoTG
             ));
             system_log(sprintf("%s：续期结果如下：\n%s", $this->username, $result));
@@ -224,7 +224,7 @@ class FreeNom
                     '',
                     'notice'
                 );
-                TelegramBot::send("报告，今天没有域名需要续期，所有域名情况如下：\n\n" . $domainInfoTG);
+                TelegramBot::send("主人，今天沒有域名需要撫子續期哦～\n所有域名情況如下：\n\n" . $domainInfoTG);
             }
             system_log(sprintf('%s：<green>执行成功，今次没有需要续期的域名。</green>', $this->username));
         }
