@@ -192,7 +192,7 @@ class FreeNom
             }
 
             $domainInfo .= sprintf('<a href="http://%s" rel="noopener" target="_blank">%s</a>还有<span style="font-weight: bold; font-size: 16px;">%d</span>天到期，', $domain, $domain, $days);
-            $domainInfoTG .= sprintf("[%s](http://%s) 还有 *%d* 天到期；", $domain, $domain, $days);
+            $domainInfoTG .= sprintf("[%s](http://%s) 还有 *%d* 天到期；\n", $domain, $domain, $days);
         }
         $domainInfoTG .= "更多信息可以參考 [Freenom 官網](https://my.freenom.com/domains.php?a=renewals) 哦～\n\n（如果你不想每次執行都收到推送，請將 config.php 中 noticeFreq 的值設為 0，使程序只在有續期操作時才推送）";
 
