@@ -224,7 +224,7 @@ class FreeNom
                     '',
                     'notice'
                 );
-                TelegramBot::send("主人，今天沒有域名需要撫子續期哦～\n\n所有域名情況如下：\n" . $domainInfoTG);
+                TelegramBot::send("主人，今天沒有域名需要撫子續期呢～\n\n所有域名情況如下：\n" . $domainInfoTG);
             }
             system_log(sprintf('%s：<green>执行成功，今次没有需要续期的域名。</green>', $this->username));
         }
@@ -327,11 +327,10 @@ class FreeNom
                     'LlfException'
                 );
                 TelegramBot::send(sprintf(
-                    '主人，出错了。具体是在%s文件的第%d行，抛出了一个异常。异常的内容是%s，快去看看吧。（账户：%s）',
+                    '主人，撫子生病了！\n\n具体是在 %s 文件的第 %d 行，抛出了一个异常。\n\n异常的内容是 %s，快來看看撫子吧～',
                     $e->getFile(),
                     $e->getLine(),
-                    $e->getMessage(),
-                    $this->username
+                    $e->getMessage()
                 ));
             } catch (\Exception $e) {
                 system_log(sprintf('出错：<red>%s</red>', $e->getMessage()), $e->getTrace());
