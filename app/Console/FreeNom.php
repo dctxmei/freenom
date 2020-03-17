@@ -182,11 +182,11 @@ class FreeNom
                 if (stripos($body, 'Order Confirmation') === false) { // 续期失败
                     $result .= sprintf("%s续期失败\n", $domain);
                     $notRenewed .= sprintf('<a href="http://%s" rel="noopener" target="_blank">%s</a>', $domain, $domain);
-                    $notRenewedTG .= sprintf("[%s](http://%s)", $domain, $domain);
+                    $notRenewedTG .= sprintf("[%s](http://%s)\n", $domain, $domain);
                 } else {
                     $result .= sprintf("%s续期成功\n", $domain);
                     $renewed .= sprintf('<a href="http://%s" rel="noopener" target="_blank">%s</a>', $domain, $domain);
-                    $renewedTG .= sprintf("[%s](http://%s)", $domain, $domain);
+                    $renewedTG .= sprintf("[%s](http://%s)\n", $domain, $domain);
                     continue;
                 }
             }
@@ -206,16 +206,12 @@ class FreeNom
                     $domainInfo ?: '哦豁，没看到其它域名。'
                 ]
             );
-            foreach ($domains as $d) {
-                $domain = $d['domain'];
-                TelegramBot::send(sprintf(
-                    "主人，撫子剛剛幫你續期域名啦～\n\n%s%s\n另外，\n%s",
-                    $renewedTG ? sprintf("續期成功的有：\n%s\n", $domain) : '',
-                    $notRenewedTG ? sprintf("續期失敗的有：\n%s\n", $domain) : '',
-                    $domainInfoTG
-                ));
-                continue;
-            }
+            TelegramBot::send(sprintf(
+                "主人，撫子剛剛幫你續期域名啦～\n\n%s%s\n另外，\n%s",
+                $renewedTG ? sprintf("續期成功的有：\n%s", $domain) : '',
+                $notRenewedTG ? sprintf("續期失敗的有：\n%s", $domain) : '',
+                $domainInfoTG
+            ));
             system_log(sprintf("%s：续期结果如下：\n%s", $this->username, $result));
         } else {
             if (config('noticeFreq') === 1) {
