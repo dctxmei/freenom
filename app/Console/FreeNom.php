@@ -192,41 +192,45 @@ class FreeNom
             }
 
             $domainInfo .= sprintf('<a href="http://%s" rel="noopener" target="_blank">%s</a>还有<span style="font-weight: bold; font-size: 16px;">%d</span>天到期，', $domain, $domain, $days);
-            $domainInfoTG .= sprintf("[%s](http://%s) 还有 *%d* 天到期；\n", $domain, $domain, $days);
+            $domainInfoTG .= sprintf("[%s](http://%s) 還有 *%d* 天到期；\n", $domain, $domain, $days);
         }
         $domainInfoTG .= "更多信息可以參考 [Freenom 官網](https://my.freenom.com/domains.php?a=renewals) 哦～\n\n（如果主人不想每次都收到推送，請將 config.php 中 noticeFreq 的值設為 0，使撫子只在有續期操作時才推送給您）";
 
-        if ($notRenewed || $renewed) {
-            Mail::send(
-                '主人，我刚刚帮你续期域名啦~',
-                [
-                    $this->username,
-                    $renewed ? sprintf('续期成功：%s<br>', $renewed) : '',
-                    $notRenewed ? sprintf('续期出错：%s<br>', $notRenewed) : '',
-                    $domainInfo ?: '哦豁，没看到其它域名。'
-                ]
-            );
-            TelegramBot::send(sprintf(
-                "主人，撫子剛剛幫你續期域名啦～\n\n%s%s\n另外，%s",
-                $renewedTG ? sprintf("續期成功的有：\n%s\n", $renewedTG) : '',
-                $notRenewedTG ? sprintf("續期失敗的有：\n%s\n", $notRenewedTG) : '',
-                $domainInfoTG
-            ));
-            system_log(sprintf("%s：续期结果如下：\n%s", $this->username, $result));
-        } else {
-            if (config('noticeFreq') === 1) {
+        foreach ($domains as $d) {
+            $domain = $d['domain'];
+
+            if ($notRenewed || $renewed) {
                 Mail::send(
-                    '报告，今天没有域名需要续期',
+                    '主人，我刚刚帮你续期域名啦~',
                     [
                         $this->username,
-                        $domainInfo
-                    ],
-                    '',
-                    'notice'
+                        $renewed ? sprintf('续期成功：%s<br>', $renewed) : '',
+                        $notRenewed ? sprintf('续期出错：%s<br>', $notRenewed) : '',
+                        $domainInfo ?: '哦豁，没看到其它域名。'
+                    ]
                 );
-                TelegramBot::send("主人，今天沒有域名需要撫子續期呢～\n\n所有域名情況如下：\n" . $domainInfoTG);
+                TelegramBot::send(sprintf(
+                    "主人，撫子剛剛幫你續期域名啦～\n\n%s%s\n另外，\n%s",
+                    $renewedTG ? sprintf("續期成功的有：\n%s\n", $domain) : '',
+                    $notRenewedTG ? sprintf("續期失敗的有：\n%s\n", $domain) : '',
+                    $domainInfoTG
+                ));
+                system_log(sprintf("%s：续期结果如下：\n%s", $this->username, $result));
+            } else {
+                if (config('noticeFreq') === 1) {
+                    Mail::send(
+                        '报告，今天没有域名需要续期',
+                        [
+                            $this->username,
+                            $domainInfo
+                        ],
+                        '',
+                        'notice'
+                    );
+                    TelegramBot::send("主人，今天沒有域名需要撫子續期呢～\n\n所有域名情況如下：\n" . $domainInfoTG);
+                }
+                system_log(sprintf('%s：<green>执行成功，今次没有需要续期的域名。</green>', $this->username));
             }
-            system_log(sprintf('%s：<green>执行成功，今次没有需要续期的域名。</green>', $this->username));
         }
     }
 
