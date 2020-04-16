@@ -215,8 +215,8 @@ class FreeNom
             );
             TelegramBot::send(sprintf(
                 "主人，撫子剛剛幫你續期域名啦～\n\n%s%s\n另外，\n%s",
-                $renewedTG ? sprintf("續期成功的有：\n%s", $domain) : '',
-                $notRenewedTG ? sprintf("續期失敗的有：\n%s", $domain) : '',
+                $renewedTG ? sprintf("續期成功的有：\n%s", $renewed) : '',
+                $notRenewedTG ? sprintf("續期失敗的有：\n%s", $notRenewed) : '',
                 $domainInfoTG
             ));
             system_log(sprintf("%s：续期结果如下：\n%s", $this->username, $result));
